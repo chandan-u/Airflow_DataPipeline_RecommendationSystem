@@ -4,6 +4,11 @@
 """
 
 
+# initialize spark
+from pyspark import SparkContext, SparkConf, SQLContext
+conf = SparkConf().setAppName("movielens pipleline").setMaster("local[2]")
+sc = SparkContext(conf=conf)
+sqlContext = SQLContext(sc)
 
 
 class BasePipleline:
@@ -35,16 +40,11 @@ class SimpleMovileLensPipeLine(BasePipleline):
         
     """
 
-    def __init__(self, **kwsources, **kwtargets):
+    def __init__(self, kwsources):
 
         self.sources = kwsources.copy()
-        self.targets  = kwtargets.copy()
-
-        # initialize spark
-        from pyspark import SparkContext, SparkConf
-        conf = SparkConf().setAppName(appName).setMaster(master)
-        sc = SparkContext(conf=conf)
-
+        self.target  = None
+       
 
     def data_ingestion(self):
         
@@ -56,6 +56,30 @@ class SimpleMovileLensPipeLine(BasePipleline):
 
         """
     
-        
-        
-         
+        ratings_rdd = sc.textFile(self.sources["ratings"])
+        tags_rdd = sc.textFile(self.sources["tags"])
+        movies_rdd = sc.textFile(self.sources["movies"])
+
+
+
+    def data_transformation(self):
+
+        # split each line into cols
+        ratings_rdd_t1 = ratings_rdd.map(lambda line: line.split(","))
+        tags_rdd_t1 = tags_rdd.map(lambda line: line.split(","))
+        movies_rdd_t1 = movies_rdd.map(lambda line: line.split(","))
+
+        # join the rdd's
+
+        ratings.join(tags)
+
+    def data_loading(self, )
+
+
+if __name__ == "__main__":
+    sources = { "movies": "../data/ml-latest-small/ratings.csv", "ratings" : "../data/ml-latest-small/ratings.csv", "tags" : "../data/ml-latest-small/tags.csv"}
+
+
+    pipeline = SimpleMovileLensPipeLine(sources)
+     
+
