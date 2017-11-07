@@ -23,13 +23,14 @@ small_dataset_url = 'http://files.grouplens.org/datasets/movielens/ml-latest-sma
 	
 try:
     
+    # saving files @
     datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
 
     print("creating data set at ", datasets_path)
     if not os.path.isdir(datasets_path):
         os.makedirs(datasets_path)
  
-    # location : storing the files
+    # saving files as
     small_dataset_path = os.path.join(datasets_path, 'ml-latest-small.zip')
 
     # download files

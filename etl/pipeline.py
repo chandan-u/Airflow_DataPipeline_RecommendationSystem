@@ -4,12 +4,6 @@
 """
 
 
-# initialize spark
-from pyspark import SparkContext, SparkConf, SQLContext
-conf = SparkConf().setAppName("movielens pipleline").setMaster("local[2]")
-sc = SparkContext(conf=conf)
-sqlContext = SQLContext(sc)
-
 
 class BasePipleline:
 
@@ -19,15 +13,20 @@ class BasePipleline:
     """
 
 
-    def data_ingestion(self):
+    def data_init(self):
         pass
 
-    def data_transformation(self):
+    def data_transform(self):
         pass
 
-    def data_loading(self):
+    def data_load(self):
         pass
 
+
+class Source():
+
+    location = None
+    file_type = None
 
     
 class SimpleMovileLensPipeLine(BasePipleline):
@@ -40,46 +39,46 @@ class SimpleMovileLensPipeLine(BasePipleline):
         
     """
 
-    def __init__(self, kwsources):
+    def __init__(self, targetDir, kwsources):
 
-        self.sources = kwsources.copy()
-        self.target  = None
+        self.sources = kwsources.copy()  # sources will be full path of the source data file
+        self.targetDir  = None           # targetDir will be the dir locatin to save transformed files
+ 
        
 
-    def data_ingestion(self):
+    def data_init(self, sqlContext):
         
         """
             ingest data from various sources
             in this case data is present on the filesystem itself
             ingest: movies.csv, ratings.csv, tags.csv
+        """
+   
+        # create dataframes
+        # expects a header in the file itself
+        self.ratings_df = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load(self.sources["ratings"])
+        self.tags_df = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load(self.sources["tags"])
+        self.movies_df = sqlContext.read.format("com.databricks.spark.csv").option("header", "true").load(self.sources["movies"])
+   
 
+    def data_transform(self):
 
         """
-    
-        ratings_rdd = sc.textFile(self.sources["ratings"])
-        tags_rdd = sc.textFile(self.sources["tags"])
-        movies_rdd = sc.textFile(self.sources["movies"])
+            join movieLens movie, ratingsn and tag dataset
+            Create a one big fact table with all dimensions
+        """ 
+       
+       
+        movielens_fact_df = self.ratings_df.join(self.tags_df, "userId").join(self.movies_df, "movieId")
+        self.data_load(movielens_fact_df, name='fact_movileLens.csv')
+
+
+    def data_load(self, df, name):
+        
+        import os
+        df.write.format("com.databricks.spark.csv").save(os.path.join(targetDir,name))
 
 
 
-    def data_transformation(self):
 
-        # split each line into cols
-        ratings_rdd_t1 = ratings_rdd.map(lambda line: line.split(","))
-        tags_rdd_t1 = tags_rdd.map(lambda line: line.split(","))
-        movies_rdd_t1 = movies_rdd.map(lambda line: line.split(","))
-
-        # join the rdd's
-
-        ratings.join(tags)
-
-    def data_loading(self, )
-
-
-if __name__ == "__main__":
-    sources = { "movies": "../data/ml-latest-small/ratings.csv", "ratings" : "../data/ml-latest-small/ratings.csv", "tags" : "../data/ml-latest-small/tags.csv"}
-
-
-    pipeline = SimpleMovileLensPipeLine(sources)
-     
 

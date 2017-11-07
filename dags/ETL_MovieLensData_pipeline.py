@@ -4,6 +4,9 @@ Based on the dag defined here the execution takes place in a different context
 For distributed computing its advised to use XCom
 
 more info: https://airflow.apache.org/tutorial.html#tasks
+
+
+TODO: Replace print statements with logging.info in future
 """
 
 import os
@@ -43,9 +46,25 @@ default_args = {
 dag = DAG('ETLPipeLineForMovieLensData', default_args=default_args) 
 
 
-
+#  directory paths
 scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','scripts')
 datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
+
+
+# Instantiate functions for python operators
+def movieLensTransformPipe():
+
+    sources = { "movies": "./dataset/movies.csv", "ratings" : "./dataset/ratings.csv", "tags" : "./dataset/tags.csv"}
+
+    pipeline = SimpleMovileLensPipeLine(sources)
+     
+    pipeline.data_ingestion(sqlContext)
+    pipeline.data_transformation()
+
+
+
+print("dowloading movielens dataset @ dataset/")
+
 
 # Operators sequence
 task_download = BashOperator(
@@ -53,11 +72,17 @@ task_download = BashOperator(
     bash_command='python3 ' + os.path.join(scripts_path, 'download.py'),
     dag=dag)
 
+print("Unziping movielens dataset @ dataset/")
+
+
 task_unzip = BashOperator(
 
     task_id='unzip_movielens_data',
     bash_command='python3 ' + os.path.join(scripts_path, 'unzip.py'),
     dag=dag)
+
+
+print("moving files @ dataset/")
 
 
 task_mv = BashOperator(
@@ -67,8 +92,8 @@ task_mv = BashOperator(
     dag=dag)
 
 
+print("removing tmp directories @ dataset/")
 
-print('rm -r' + os.path.join(datasets_path, 'ml-latest-small',''))
 task_rmdir = BashOperator(
 
     task_id='rmdir_movielens_data',
@@ -76,9 +101,36 @@ task_rmdir = BashOperator(
     dag=dag)
 
 
+print("transforming @dataset")
+
+
+task_transform = BashOperator(
+
+    task_id='transform_movielens_data',
+    bash_command='python3 ' + os.path.join(scripts_path,'transform.py'),
+    dag=dag)
+
+print("created a master movielens fact dataset in:  dataset/fact_movileLens.csv ")
+
+
+
+# uncomment this if you have to remove files in the dataset dir 
+# except for the final transformed data
+
+# task_rmdir_base = BashOperator(
+
+#     task_id='rmdir_movielens_data',
+#     bash_command='rm -r ' + os.path.join(datasets_path, 'ml-latest-small',''),
+#     dag=dag)
+
+# print("removing unnecessary files @dataset")
+
+
+
 # setting up dependencies.
 
 task_unzip.set_upstream(task_download)
 task_mv.set_upstream(task_unzip)
 task_rmdir.set_upstream(task_mv)
+task_mv.set_upstream(task_transform)
 
