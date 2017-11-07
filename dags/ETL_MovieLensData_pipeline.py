@@ -6,6 +6,7 @@ For distributed computing its advised to use XCom
 more info: https://airflow.apache.org/tutorial.html#tasks
 """
 
+import os
 
 # We need this to instantiate the DAG
 from airflow import DAG
@@ -14,7 +15,7 @@ from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 
 
-
+ 
 
 
 
@@ -25,12 +26,12 @@ from datetime import datetime, timedelta
 default_args = {
     'owner': 'ChandanU',
     'depends_on_past': False,
-    'start_date': datetime(2017, 9, 1),
+    'start_date': datetime(2017, 11, 6),
     'email': ['chandan.uppuluri@gmail.com'],
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    #'retry_delay': timedelta(minutes=5),
     # 'queue': 'bash_queue',
     # 'pool': 'backfill',
     # 'priority_weight': 10,
@@ -39,21 +40,45 @@ default_args = {
 
 
 # Instantiate DAG object
-dag = DAG('simpleETLPipeLineForMovieLensData', default_args=default_args) 
+dag = DAG('ETLPipeLineForMovieLensData', default_args=default_args) 
 
 
+
+scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','scripts')
+datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
 
 # Operators sequence
 task_download = BashOperator(
-    task_id='download_data',
-    bash_command='python3 ../scripts/download.py',
+    task_id='download_movielens_data',
+    bash_command='python3 ' + os.path.join(scripts_path, 'download.py'),
     dag=dag)
 
 task_unzip = BashOperator(
 
-    task_id='',
-    bash_command='sleep 5',
-    retries=3,
+    task_id='unzip_movielens_data',
+    bash_command='python3 ' + os.path.join(scripts_path, 'unzip.py'),
     dag=dag)
 
+
+task_mv = BashOperator(
+
+    task_id='mv_movielens_data',
+    bash_command='mv ' + os.path.join(datasets_path, 'ml-latest-small', '* ') + datasets_path,
+    dag=dag)
+
+
+
+print('rm -r' + os.path.join(datasets_path, 'ml-latest-small',''))
+task_rmdir = BashOperator(
+
+    task_id='rmdir_movielens_data',
+    bash_command='rm -r ' + os.path.join(datasets_path, 'ml-latest-small',''),
+    dag=dag)
+
+
+# setting up dependencies.
+
+task_unzip.set_upstream(task_download)
+task_mv.set_upstream(task_unzip)
+task_rmdir.set_upstream(task_mv)
 

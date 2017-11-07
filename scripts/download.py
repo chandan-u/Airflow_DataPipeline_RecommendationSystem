@@ -1,7 +1,11 @@
-
-
+"""
+   This script downloads movieLens Data set from :
+   'http://files.grouplens.org/datasets/movielens/'
+"""
 
 import os 
+import sys
+
 
 try:
     import urllib.request
@@ -12,27 +16,31 @@ except ImportError:
     
 
 
-
+# dataset download url
 #complete_dataset_url = 'http://files.grouplens.org/datasets/movielens/ml-latest.zip'
 small_dataset_url = 'http://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
-
-
+	
 try:
     
-    datasets_path = os.path.join('..', 'datasets')
+    datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
 
-    #complete_dataset_path = os.path.join(datasets_path, 'ml-latest.zip')
+    print("creating data set at ", datasets_path)
+    if not os.path.isdir(datasets_path):
+        os.makedirs(datasets_path)
+ 
+    # location : storing the files
     small_dataset_path = os.path.join(datasets_path, 'ml-latest-small.zip')
 
-    small_f = urllib.urlretrieve (small_dataset_url, small_dataset_path)
-    #complete_f = urllib.urlretrieve (complete_dataset_url, complete_dataset_path)
+    # download files
+    small_f = urllib.request.urlretrieve(small_dataset_url, small_dataset_path)
 
 except:
 
     import traceback
-
-	logging.info("Error with Download")
+    import logging
+    logging.warn("Error with Download")
+    logging.info("Error With Download")
     traceback.print_exc(file=sys.stdout)
 
 
