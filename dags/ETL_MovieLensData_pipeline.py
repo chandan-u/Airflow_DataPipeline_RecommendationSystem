@@ -45,13 +45,13 @@ dag = DAG('simpleETLPipeLineForMovieLensData', default_args=default_args)
 
 # Operators sequence
 task_download = BashOperator(
-    task_id='extract_data',
+    task_id='download_data',
     bash_command='python3 ../scripts/download.py',
     dag=dag)
 
 task_unzip = BashOperator(
 
-    task_id='unzip',
+    task_id='',
     bash_command='sleep 5',
     retries=3,
     dag=dag)
