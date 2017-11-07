@@ -97,7 +97,7 @@ print("removing tmp directories @ dataset/")
 task_rmdir = BashOperator(
 
     task_id='rmdir_movielens_data',
-    bash_command='rm -r ' + os.path.join(datasets_path, 'ml-latest-small',''),
+    bash_command='rm -r  ' + os.path.join(datasets_path, 'ml-latest-small',''),
     dag=dag)
 
 
@@ -132,5 +132,5 @@ print("created a master movielens fact dataset in:  dataset/fact_movileLens.csv 
 task_unzip.set_upstream(task_download)
 task_mv.set_upstream(task_unzip)
 task_rmdir.set_upstream(task_mv)
-task_mv.set_upstream(task_transform)
+task_transform.set_upstream(task_rmdir)
 
