@@ -7,6 +7,10 @@ Each pipeline is executed as Directed Acyclic graph using the Airflow
 
 It uses spark for transformations. 
 
+**NOTE: This code requires python version 3.5. Not tested for other versions**
+
+
+
 ## Transformations
 
 Each transformation peipleline can be defined by exetending etl.pipline.BasePipeLine
@@ -51,20 +55,29 @@ airflow scheduler
 airflow worker
 
 
-## steps to run the pipeline
+# steps to run the pipeline
 
 
-### Using Airflow
+## Using Airflow
 airflow trigger_dag ETLPipeLineForMovieLensData
 
   (or)    
 
-### Using python
+## Using python
 python dags/ETL_MovieLensData_pipeline.py    
 
 
+# A look at the airflow UI:
 
-NOTE: This code requires python version 3.5. Not tested for other versions
+
+default address: localhost:8080
+
+## DAG Tree of all the executions of the pipeline
+
+![DAG Tree Image](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
+
+
 
 
 
