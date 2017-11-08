@@ -1,6 +1,7 @@
 
 """
   This is the Pipleline module 
+  Implement data transformation pipelines here which exted the BasePipeline
 """
 
 
