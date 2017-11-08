@@ -49,6 +49,7 @@ dag = DAG('ETLPipeLineForMovieLensData', default_args=default_args)
 #  directory paths
 scripts_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','scripts')
 datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
+unittests_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','tests')
 
 
 # Instantiate functions for python operators
@@ -127,10 +128,20 @@ print("created a master movielens fact dataset in:  dataset/fact_movileLens.csv 
 
 
 
-# setting up dependencies.
+task_testing = BashOperator(
 
+    task_id='testing_movielens_ETL',
+    bash_command='python3 ' + os.path.join(unittests_path, 'test_transform.py'),
+    dag=dag)
+
+
+
+
+
+# setting up dependencies.
 task_unzip.set_upstream(task_download)
 task_mv.set_upstream(task_unzip)
 task_rmdir.set_upstream(task_mv)
 task_transform.set_upstream(task_rmdir)
+task_testing.set_upstream(task_transform)
 

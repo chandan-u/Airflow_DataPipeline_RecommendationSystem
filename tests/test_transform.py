@@ -5,12 +5,14 @@ import subprocess
 
 class TestTransformation(unittest.TestCase):
     """
-    Test the add function from the mymath library
+    Test the Transformation process
     """
  
     def test_check_row_count_facttable(self):
         """
-        Test that the addition of two integers returns the correct total
+            test join result
+            No of rows in result table should be <= number of rows in source tables of join
+            should pass
         """
 
 
@@ -45,7 +47,19 @@ class TestTransformation(unittest.TestCase):
         assert actual_number_lines >= number_lines
 
 
-    def test_check_row_count_genre(self):
+
+    def test_check_python2(self):
+        """
+            should fail: urllib package is different
+            yet to write
+        """
+        pass
+
+    def test_check_python3_6(self):
+        """
+            should fail: Spark doesnt support python3.6
+            yet to write
+        """
         pass
 
 

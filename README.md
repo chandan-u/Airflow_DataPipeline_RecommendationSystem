@@ -1,5 +1,4 @@
 
-
 # About:
 
 This project is End to End ETL pipleline of MovielensDataset for training a recommendation system.The end to end workflow is automated using Apache Airflow. 
@@ -75,9 +74,7 @@ NOTE: This code requires python version 3.5. Not tested for other versions
 1. Setup a pipeline to train a simple predicitve model    
 2. Working on subbranch instead of master    
 3. Create Config file: To handle spark & files configuration (use ConfigParser for this)    
-4. Improve testcases/ or include data validation as one of the tasks in airflow dag
-5. Modify scripts/transform.py to function 
-
+4. Modify scripts/transform.py to function 
 
 
 
