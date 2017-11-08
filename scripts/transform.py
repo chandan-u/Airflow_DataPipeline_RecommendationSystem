@@ -9,9 +9,12 @@
 import os
 
 # pipelines
+import sys
+from pathlib import Path
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',''))
 from etl.pipeline import SimpleMovileLensPipeLine
 
-# initialize spark
+# initialize sparkcontext/sqlcontext
 try:
     from pyspark import SparkContext, SparkConf, SQLContext
     conf = SparkConf().setAppName("movielens transform pipleline").setMaster("local[2]")
@@ -32,12 +35,14 @@ except:
 if __name__ == "__main__":
 
 
+    # dataset path
     datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
 
+    # sources files paths & target directory to save transformations
     sources = { "movies": os.path.join(datasets_path, "movies.csv"), "ratings" : os.path.join(datasets_path, "ratings.csv"), "tags" : os.path.join(datasets_path, "tags.csv") }
     targetDir = datasets_path
 
-
+    # transformation pipeline actions
     pipeline = SimpleMovileLensPipeLine(targetDir, sources)
     pipeline.data_init(sqlContext)
     pipeline.data_transform()

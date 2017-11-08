@@ -23,7 +23,7 @@ small_dataset_url = 'http://files.grouplens.org/datasets/movielens/ml-latest-sma
 	
 try:
     
-    # saving files @
+    # saving files @ datasets
     datasets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','datasets')
 
     print("creating data set at ", datasets_path)
@@ -40,8 +40,7 @@ except:
 
     import traceback
     import logging
-    logging.warn("Error with Download")
-    logging.info("Error With Download")
+    logging.error("Error With Download")
     traceback.print_exc(file=sys.stdout)
 
 

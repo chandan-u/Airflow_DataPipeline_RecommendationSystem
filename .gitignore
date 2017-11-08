@@ -13,3 +13,5 @@ derby.log
 
 python3_env
 python3_env/*
+python3.45_env
+python3.45_env/*

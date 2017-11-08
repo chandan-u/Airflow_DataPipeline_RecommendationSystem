@@ -68,11 +68,20 @@ class SimpleMovileLensPipeLine(BasePipleline):
             Create a one big fact table with all dimensions
         """ 
        
+
+
+        # perform full outer join on three tables
         tags_df_renamed = self.tags_df.withColumnRenamed("timestamp", "tag_timestamp")
+
+        # sample tables for logs
         self.ratings_df.show(3)
         tags_df_renamed.show(3)
         self.movies_df.show(3)
+
+        # inner join 
         movielens_fact_df = self.ratings_df.join(tags_df_renamed, ["userId", "movieId"]).join(self.movies_df, "movieId")
+        
+        # save dataframe to csv
         self.data_load(movielens_fact_df, name='fact_movileLens.csv')
 
 
@@ -82,6 +91,6 @@ class SimpleMovileLensPipeLine(BasePipleline):
         df.write.format("com.databricks.spark.csv").save(os.path.join(self.targetDir,name))
 
 
-
+        
 
 
