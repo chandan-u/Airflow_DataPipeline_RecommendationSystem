@@ -74,7 +74,7 @@ default address: localhost:8080
 
 ## DAG Tree of all the executions of the pipeline
 
-![DAG Tree Image](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+![DAG Tree Image](https://github.com/chandan-u/Airflow_DataPipeline_RecommendationSystem/tree/master/docs/img/Data_tree.png)
 
 
 
