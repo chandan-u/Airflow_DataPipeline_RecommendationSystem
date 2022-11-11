@@ -35,7 +35,7 @@ pandas==0.21.0
 psutil==4.4.2
 py4j==0.10.4
 Pygments==2.2.0
-pyspark==2.1.0+hadoop2.7
+pyspark==3.2.2
 python-daemon==2.1.2
 python-dateutil==2.6.1
 python-editor==1.0.3
